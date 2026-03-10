@@ -1,12 +1,11 @@
 pipeline {
     agent any
 
-    stages {
-        stage('Clone Repo') {
-            steps {
-                git 'https://github.com/PratikshaDevsecops/my-ci-demo.git'
-            }
-        }
+stage('Clone Repo') {
+    steps {
+        git branch: 'main', url: 'https://github.com/PratikshaDevsecops/my-ci-demo.git'
+    }
+}
 
         stage('Install Dependencies') {
             steps {
