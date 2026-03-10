@@ -1,11 +1,13 @@
 pipeline {
     agent any
 
-stage('Clone Repo') {
-    steps {
-        git branch: 'main', url: 'https://github.com/PratikshaDevsecops/my-ci-demo.git'
-    }
-}
+    stages {
+        stage('Clone Repo') {
+            steps {
+                // Explicitly checkout main branch
+                git branch: 'main', url: 'https://github.com/PratikshaDevsecops/my-ci-demo.git'
+            }
+        }
 
         stage('Install Dependencies') {
             steps {
@@ -15,8 +17,15 @@ stage('Clone Repo') {
 
         stage('Syntax Check') {
             steps {
-                // This will fail if Python file has syntax errors
+                // Fail if Python file has syntax errors
                 sh 'python -m py_compile app.py'
+            }
+        }
+
+        stage('Run App') {
+            steps {
+                // Run the Python script and print output
+                sh 'python app.py'
             }
         }
 
