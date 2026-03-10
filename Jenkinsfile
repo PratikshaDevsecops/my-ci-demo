@@ -4,29 +4,34 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                // Explicitly checkout main branch
                 git branch: 'main', url: 'https://github.com/PratikshaDevsecops/my-ci-demo.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Setup Python Environment') {
             steps {
-                // Use pip3 since Python3 is installed inside container
-                sh 'pip3 install -r requirements.txt'
+                // Create a virtual environment
+                sh 'python3 -m venv venv'
+                
+                // Activate venv and upgrade pip
+                sh '. venv/bin/activate && pip install --upgrade pip'
+                
+                // Install requirements inside venv
+                sh '. venv/bin/activate && pip install -r requirements.txt'
             }
         }
 
         stage('Syntax Check') {
             steps {
-                // Fail if Python file has syntax errors
-                sh 'python3 -m py_compile app.py'
+                // Run syntax check inside venv
+                sh '. venv/bin/activate && python -m py_compile app.py'
             }
         }
 
         stage('Run App') {
             steps {
-                // Run the Python script and print output
-                sh 'python3 app.py'
+                // Run the Python app inside venv
+                sh '. venv/bin/activate && python app.py'
             }
         }
 
@@ -39,10 +44,10 @@ pipeline {
 
     post {
         failure {
-            echo "❌ Build failed due to a human error in code!"
+            echo "❌ Build failed due to a human error in code or environment!"
         }
         success {
-            echo "✅ Build passed!"
+            echo "✅ Build passed successfully!"
         }
     }
 }
